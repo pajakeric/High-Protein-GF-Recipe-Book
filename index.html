@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#1B3A4B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HP Cookbook">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<title>High Protein Cookbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B3A4B; --teal: #3D8B7A; --orange: #D4763C; --cream: #FAF6F0;
+  --bg: #F6F5F0; --card: #fff; --text: #1a1a1a; --sub: #777; --light: #eee;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--text)}
+::-webkit-scrollbar{display:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeUp .25s ease both}
+
+/* Header */
+.hdr{background:linear-gradient(145deg,#1B3A4B,#2A5568);padding:calc(12px + var(--safe-top)) 16px 10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.hdr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.hdr h1{font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:800;color:#fff;letter-spacing:-.3px;cursor:pointer}
+.hdr .sub{font-size:10px;color:rgba(255,255,255,.45);font-weight:600;letter-spacing:.8px;margin-top:1px}
+.hdr-btns{display:flex;gap:6px}
+.hdr-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:6px 12px;font-size:11px;font-weight:600;color:#fff;cursor:pointer;font-family:inherit;transition:background .15s}
+.hdr-btn:active{background:rgba(255,255,255,.2)}
+.hdr-btn.active{background:rgba(255,100,100,.22)}
+
+/* Search */
+.search-wrap{position:relative;margin-bottom:10px}
+.search-wrap input{width:100%;padding:9px 14px 9px 34px;border-radius:12px;border:none;background:rgba(255,255,255,.1);color:#fff;font-size:13px;font-family:inherit;font-weight:500;outline:none}
+.search-wrap input::placeholder{color:rgba(255,255,255,.35)}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.4}
+.search-clear{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:13px;color:rgba(255,255,255,.4);cursor:pointer;background:none;border:none}
+
+/* Filter pills */
+.pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+.pill{flex-shrink:0;padding:5px 13px;border-radius:20px;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .15s;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6)}
+.pill.on{background:#fff;color:var(--navy)}
+
+/* Main scroll area */
+.main{height:calc(100vh - 1px);overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(40px + var(--safe-bottom))}
+
+/* Cards */
+.cards{padding:14px 14px 30px;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.04);cursor:pointer;transition:transform .15s,box-shadow .15s}
+.card:active{transform:scale(.985)}
+.card-head{padding:12px 14px 8px;display:flex;justify-content:space-between;align-items:flex-start}
+.card-cat{display:flex;align-items:center;gap:5px}
+.card-cat span.icon{font-size:13px}
+.card-cat span.label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px}
+.gf-badge{font-size:8.5px;font-weight:700;background:#2E7D32;color:#fff;padding:1px 5px;border-radius:3px;margin-left:3px}
+.fav-btn{background:none;border:none;font-size:18px;cursor:pointer;padding:0;line-height:1}
+.card-body{padding:4px 14px 14px}
+.card-body h3{font-family:'Playfair Display',Georgia,serif;font-size:15px;font-weight:700;line-height:1.3;margin-bottom:7px;color:var(--text)}
+.card-meta{display:flex;gap:6px;font-size:11px;color:var(--sub);font-weight:500;margin-bottom:10px}
+.card-meta .sep{color:#ddd}
+.macros{display:flex;gap:4px}
+.macro{flex:1;text-align:center;padding:8px 2px;background:rgba(0,0,0,.025);border-radius:9px}
+.macro .val{font-size:17px;font-weight:800;letter-spacing:-.4px}
+.macro .lbl{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:#999;margin-top:1px;font-weight:600}
+
+/* Detail */
+.detail{padding:14px 16px 40px}
+.back-btn{background:none;border:none;font-size:13px;font-weight:600;color:#666;cursor:pointer;padding:6px 0;font-family:inherit;display:flex;align-items:center;gap:4px}
+.detail-header{border-radius:16px;padding:18px 18px 14px;margin:12px 0 18px}
+.detail-header .cat-row{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.detail-header h1{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:800;line-height:1.25;margin-bottom:8px}
+.detail-header .meta{font-size:13px;color:#666;font-weight:500}
+.detail h2{font-family:'Playfair Display',Georgia,serif;font-size:15px;font-weight:700;margin:0 0 10px}
+.detail ul{padding:0 0 0 18px;margin:0 0 22px;display:flex;flex-direction:column;gap:5px}
+.detail li{font-size:13.5px;line-height:1.5;color:#444}
+.detail ol{padding:0 0 0 22px;margin:0 0 22px;display:flex;flex-direction:column;gap:8px}
+.detail ol li{font-size:13.5px;line-height:1.6;color:#333}
+.tip-box{border-radius:0 12px 12px 0;padding:12px 14px;margin-bottom:18px}
+
+/* Sides */
+.sides-page{padding:14px 16px 40px}
+.sides-page h2{font-family:'Playfair Display',Georgia,serif;font-size:20px;font-weight:800;margin-bottom:4px}
+.sides-page .intro{font-size:12.5px;color:#888;line-height:1.5;margin-bottom:18px}
+.side-card{background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);border:1px solid rgba(0,0,0,.04);margin-bottom:8px}
+.side-toggle{padding:13px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.side-toggle .left{display:flex;align-items:center;gap:9px}
+.side-toggle .name{font-family:'Playfair Display',Georgia,serif;font-size:14.5px;font-weight:700}
+.side-toggle .smacros{font-size:10.5px;color:#999;margin-top:1px}
+.side-toggle .arrow{font-size:16px;color:#bbb;transition:transform .2s}
+.side-toggle .arrow.open{transform:rotate(180deg)}
+.side-body{padding:0 14px 14px}
+.method-card{background:#f8f8f7;border-radius:10px;padding:10px 12px;margin-bottom:6px}
+.method-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.method-top .mname{font-size:12.5px;font-weight:700;color:var(--text)}
+.method-top .mtime{font-size:10px;font-weight:700;color:var(--orange);background:#FFF3E0;padding:2px 8px;border-radius:20px}
+.method-card p{font-size:12.5px;line-height:1.5;color:#666;margin:0}
+
+/* Empty */
+.empty{text-align:center;padding:60px 20px;color:#999}
+.empty .big{font-size:40px;margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+// ═══ DATA ═══
+const R=[
+{id:1,c:"Chicken Breast",n:"Lemon Herb Grilled Chicken with Roasted Mini Red Potatoes & Asparagus",t:"35 min",s:"2",cal:520,p:48,cb:42,f:14,gf:1,
+ig:["2 chicken breasts (6 oz each)","1 lb mini red potatoes, halved","1 bunch asparagus, trimmed","2 lemons (juice + zest)","3 cloves garlic, minced","1 tbsp olive oil","1 tsp dried oregano","Salt & pepper to taste"],
+st:["Preheat oven to 425°F. Marinate chicken in lemon juice, zest, garlic, oregano, half the olive oil, salt, and pepper for 10 minutes.","Toss halved mini red potatoes with remaining olive oil, salt, and pepper. Spread on a sheet pan and roast 15 minutes.","Add asparagus to the sheet pan. Continue roasting 10 minutes.","Meanwhile, grill or pan-sear chicken over medium-high heat, about 5–6 minutes per side until internal temp reaches 165°F.","Slice chicken and serve over potatoes and asparagus. Squeeze fresh lemon on top."],
+tp:"Double the chicken and potatoes for next-day meal prep. Pairs well with a side of cottage cheese for extra protein."},
+{id:2,c:"Chicken Breast",n:"Chicken Stir-Fry with Brown Rice",t:"25 min",s:"2",cal:510,p:46,cb:48,f:12,gf:1,
+ig:["2 chicken breasts (6 oz each), sliced thin","2 cups mixed stir-fry vegetables","1 cup brown rice, cooked","2 tbsp coconut aminos or GF tamari","1 tbsp rice vinegar","1 tsp sesame oil","1 tbsp fresh ginger, grated","2 cloves garlic, minced","1 tsp cornstarch + 1 tbsp water (slurry)"],
+st:["Cook brown rice according to package directions.","Heat a large skillet or wok over high heat. Add sesame oil and sear chicken strips 3–4 minutes until golden. Remove.","In the same pan, stir-fry vegetables with garlic and ginger 3–4 minutes.","Return chicken. Add coconut aminos, rice vinegar, and cornstarch slurry. Toss until sauce thickens.","Serve over brown rice."],
+tp:"Swap brown rice for cauliflower rice to cut 30g carbs and 120 calories. Coconut aminos are naturally GF."},
+{id:3,c:"Chicken Breast",n:"Blackened Chicken Tacos with Cilantro-Lime Slaw",t:"20 min",s:"2 (3 tacos each)",cal:480,p:44,cb:38,f:16,gf:1,
+ig:["2 chicken breasts (6 oz each)","6 corn tortillas (naturally GF)","2 cups shredded cabbage","¼ cup fresh cilantro, chopped","1 lime (juice)","2 tbsp plain Greek yogurt","1 tbsp blackening seasoning","1 tsp olive oil"],
+st:["Coat chicken breasts generously with blackening seasoning.","Heat olive oil in a cast iron skillet over medium-high. Cook chicken 5–6 minutes per side. Let rest, then slice.","Mix cabbage with cilantro, lime juice, Greek yogurt, and salt for the slaw.","Warm corn tortillas in a dry skillet or over an open flame.","Assemble tacos: tortilla, sliced chicken, slaw on top."],
+tp:"Add diced avocado for healthy fats. Corn tortillas keep this naturally gluten-free."},
+{id:4,c:"Chicken Breast",n:"Greek Chicken Sheet Pan with Tzatziki",t:"35 min",s:"2",cal:500,p:47,cb:36,f:18,gf:1,
+ig:["2 chicken breasts (6 oz each)","1 cup cherry tomatoes","1 medium zucchini, sliced","½ red onion, cut into wedges","¼ cup Kalamata olives, halved","1 tbsp olive oil","1 tsp dried oregano","1 tsp garlic powder","Salt & pepper","Tzatziki: ½ cup Greek yogurt, ¼ cucumber (grated), 1 clove garlic, 1 tbsp lemon juice, dill"],
+st:["Preheat oven to 425°F. Season chicken with oregano, garlic powder, salt, pepper.","Toss vegetables and olives with olive oil. Spread on sheet pan with chicken.","Roast 22–25 minutes until chicken reaches 165°F.","Mix all tzatziki ingredients. Refrigerate until ready.","Plate chicken over vegetables, drizzle with tzatziki."],
+tp:"Serve over cauliflower rice or alongside mini red potatoes. Tzatziki doubles as a veggie dip."},
+{id:5,c:"Chicken Breast",n:"Salsa Verde Chicken Skillet",t:"25 min",s:"2",cal:490,p:46,cb:38,f:14,gf:1,
+ig:["2 chicken breasts (6 oz each), pounded even","1 cup salsa verde (check for GF)","1 can (15 oz) black beans, drained","1 cup corn kernels","½ cup shredded Mexican cheese","1 cup rice, cooked","1 tbsp olive oil","Fresh cilantro and lime wedges"],
+st:["Heat olive oil in a skillet over medium-high. Season chicken, sear 4 minutes per side.","Add beans and corn around chicken. Pour salsa verde over everything.","Cover, simmer 8–10 minutes until chicken is 165°F.","Sprinkle cheese, cover 1–2 minutes until melted.","Serve over rice with cilantro and lime."],
+tp:"One-pan meal with almost no dishes. Swap rice for shredded lettuce for lower carb."},
+{id:6,c:"Chicken Breast",n:"Cajun Chicken & Rice Skillet",t:"30 min",s:"2",cal:530,p:46,cb:46,f:15,gf:1,
+ig:["2 chicken breasts (6 oz each), diced","1 cup jasmine rice, cooked","1 bell pepper, diced","1 stalk celery, diced","½ onion, diced","1 can (14 oz) diced tomatoes","2 cloves garlic, minced","1 tbsp Cajun seasoning (check GF)","1 tbsp olive oil","Hot sauce to taste"],
+st:["Season diced chicken with Cajun seasoning.","Heat olive oil over medium-high. Cook chicken 5–6 minutes until browned. Remove.","Sauté pepper, celery, onion 3–4 minutes. Add garlic 30 seconds.","Add diced tomatoes, simmer. Return chicken, cook 5 minutes.","Serve over jasmine rice with hot sauce."],
+tp:"Basically a healthy jambalaya. Add andouille sausage on heavy training days."},
+{id:7,c:"Chicken Breast",n:"Balsamic Chicken with Roasted Brussels Sprouts & Sweet Potato",t:"35 min",s:"2",cal:510,p:45,cb:44,f:15,gf:1,
+ig:["2 chicken breasts (6 oz each)","2 cups Brussels sprouts, halved","1 large sweet potato, diced","2 tbsp balsamic vinegar","1 tbsp olive oil","1 tsp Dijon mustard","1 tsp garlic powder","Salt & pepper"],
+st:["Preheat oven to 425°F. Toss sweet potato and Brussels sprouts with oil, garlic powder, salt, pepper on a sheet pan.","Roast 10 minutes while you prep.","Whisk balsamic and Dijon. Season chicken.","Push veggies aside, add chicken, brush with half the glaze.","Roast 20–22 minutes until chicken is 165°F and Brussels are caramelized.","Drizzle remaining glaze before serving."],
+tp:"Sweet potato and balsamic caramelize together beautifully. Great meal prep option."},
+{id:8,c:"Ground Beef (93/7)",n:"Beef & Sweet Potato Skillet",t:"30 min",s:"2",cal:530,p:42,cb:44,f:18,gf:1,
+ig:["12 oz 93/7 lean ground beef","1 large sweet potato, diced","1 bell pepper, diced","½ onion, diced","2 cloves garlic, minced","1 tsp cumin","1 tsp smoked paprika","½ tsp chili powder","Salt & pepper","Fresh spinach (2 handfuls)"],
+st:["Microwave diced sweet potato 4–5 minutes until slightly tender.","Brown ground beef. Drain if needed. Remove.","Sauté onion and pepper 3 minutes. Add garlic and spices 1 minute.","Add sweet potato and beef back. Cook 5 minutes.","Stir in spinach until wilted."],
+tp:"Top with a fried egg for extra 6g protein and 70 calories. Great meal prep—holds 3–4 days."},
+{id:9,c:"Ground Beef (93/7)",n:"Korean Beef Bowls",t:"20 min",s:"2",cal:540,p:40,cb:50,f:17,gf:1,
+ig:["12 oz 93/7 lean ground beef","1 cup jasmine rice, cooked","2 tbsp coconut aminos or GF tamari","1 tbsp sesame oil","1 tbsp rice vinegar","1 tbsp sriracha","2 cloves garlic, minced","1 tsp fresh ginger","2 green onions, sliced","1 cup shredded carrots","1 cucumber, sliced","Sesame seeds"],
+st:["Cook rice according to package.","Brown ground beef into crumbles. Drain if needed.","Mix coconut aminos, sesame oil, rice vinegar, sriracha, garlic, ginger. Pour over beef, cook 2 minutes.","Build bowls: rice, beef, carrots, cucumber, green onions, sesame seeds."],
+tp:"Add a soft-boiled egg and sriracha mayo (Greek yogurt + sriracha) for restaurant quality."},
+{id:10,c:"Ground Beef (93/7)",n:"One-Pot Beef & Black Bean Chili",t:"35 min",s:"4",cal:440,p:38,cb:36,f:14,gf:1,
+ig:["1 lb 93/7 lean ground beef","1 can (15 oz) black beans, drained","1 can (14 oz) diced tomatoes","1 can (8 oz) tomato sauce","1 bell pepper, diced","1 onion, diced","3 cloves garlic, minced","2 tbsp chili powder","1 tsp cumin","½ tsp smoked paprika","Salt & pepper","Toppings: Greek yogurt, cheese, green onions"],
+st:["Brown beef with onion and pepper 5 minutes.","Add garlic and spices 1 minute.","Add tomatoes, tomato sauce, beans. Stir.","Simmer 20–25 minutes on low.","Serve with toppings."],
+tp:"Makes 4 servings—perfect for batch cooking. Freezes up to 3 months."},
+{id:11,c:"Ground Beef (93/7)",n:"Cheeseburger Casserole (No Bun Needed)",t:"40 min",s:"4",cal:480,p:42,cb:30,f:20,gf:1,
+ig:["1.25 lbs 93/7 lean ground beef","1 lb mini red potatoes, sliced thin","1 cup shredded cheddar","1 can (14 oz) diced tomatoes, drained","2 tbsp yellow mustard","2 tbsp tomato paste","1 tbsp GF Worcestershire sauce","½ onion, diced","2 cloves garlic, minced","1 cup diced dill pickles","1 tsp each: garlic powder, onion powder, smoked paprika","Salt & pepper","Shredded lettuce & pickles for topping"],
+st:["Preheat oven to 400°F. Slice potatoes thin, toss with oil, salt, pepper. Spread in greased 9x13 dish. Bake 15 minutes.","Brown beef with onion. Drain if needed.","Stir in garlic, tomato paste, mustard, Worcestershire, tomatoes, spices. Cook 3–4 minutes.","Spread beef over par-cooked potatoes.","Top with cheddar. Bake 15–18 minutes until bubbly.","Top with lettuce and pickles."],
+tp:"All the cheeseburger flavor without the bun. Special sauce: Greek yogurt + mustard + paprika + pickle juice."},
+{id:12,c:"Sirloin Steak",n:"Grilled Sirloin with Chimichurri & Roasted Vegetables",t:"30 min",s:"2",cal:510,p:48,cb:28,f:22,gf:1,
+ig:["12 oz sirloin steak (1 inch thick)","1 zucchini, sliced","1 bell pepper, strips","1 red onion, wedges","1 tbsp olive oil","Salt & pepper","Chimichurri: 1 cup parsley, 3 cloves garlic, 2 tbsp red wine vinegar, 2 tbsp olive oil, red pepper flakes"],
+st:["Make chimichurri: chop parsley and garlic, mix with vinegar, oil, pepper flakes.","Preheat grill or cast iron to high. Pat steak dry, season generously.","Toss vegetables with oil, salt, pepper. Grill or roast at 425°F 15 minutes.","Grill steak 4–5 minutes per side for medium-rare (130°F). Rest 5 minutes.","Plate sliced steak over vegetables, spoon chimichurri on top."],
+tp:"Chimichurri keeps a week in the fridge. Double batch—great on chicken and eggs too."},
+{id:13,c:"Sirloin Steak",n:"Steak Fajita Bowl",t:"25 min",s:"2",cal:530,p:46,cb:42,f:18,gf:1,
+ig:["12 oz sirloin, sliced thin","1 bell pepper, sliced","1 onion, sliced","1 cup rice, cooked","1 tbsp fajita seasoning (check GF)","1 tbsp olive oil","Lime wedges","Optional: salsa, Greek yogurt, lettuce"],
+st:["Season steak strips with fajita seasoning.","Heat oil over high. Sear steak 2–3 minutes. Remove.","Cook peppers and onions 4–5 minutes until charred.","Build bowls: rice, veggies, steak, toppings.","Squeeze lime over everything."],
+tp:"Prep steak and veggies the night before—cuts active cooking to under 15 minutes."},
+{id:14,c:"Pulled Rotisserie Chicken",n:"Chicken & Veggie Quesadillas",t:"15 min",s:"2 (2 each)",cal:490,p:44,cb:36,f:18,gf:0,
+ig:["2 cups pulled rotisserie chicken","4 corn or GF tortillas","½ cup shredded Mexican cheese","1 bell pepper, diced","¼ cup corn kernels","2 tbsp salsa","Cooking spray","Optional: Greek yogurt for dipping"],
+st:["Mix chicken with pepper, corn, and salsa.","Spread mixture on half of each tortilla. Add cheese. Fold.","Cook in skillet with cooking spray 2–3 minutes per side.","Cut into wedges. Serve with Greek yogurt."],
+tp:"Corn tortillas keep this GF. Siete brand at Costco makes great grain-free tortillas."},
+{id:15,c:"Pulled Rotisserie Chicken",n:"Buffalo Chicken Stuffed Sweet Potatoes",t:"15 min (+potato)",s:"2",cal:470,p:42,cb:44,f:12,gf:1,
+ig:["2 medium sweet potatoes","2 cups pulled rotisserie chicken","3 tbsp buffalo sauce (Frank's RedHot + butter)","2 tbsp plain Greek yogurt","1 stalk celery, diced","1 green onion, sliced","1 tbsp blue cheese (optional)"],
+st:["Cook sweet potatoes (microwave 8–10 min or bake 400°F 45 min).","Toss chicken with buffalo sauce.","Split potatoes, fluff with fork.","Stuff with chicken. Top with yogurt, celery, green onion, blue cheese."],
+tp:"Bake potatoes in bulk on prep day—keep 4–5 days. Frank's RedHot is naturally GF."},
+{id:16,c:"Pulled Rotisserie Chicken",n:"Chicken Fried Rice",t:"15 min",s:"2",cal:490,p:40,cb:48,f:14,gf:1,
+ig:["2 cups pulled rotisserie chicken","2 cups jasmine rice (day-old)","2 eggs","1 cup frozen peas and carrots","2 tbsp coconut aminos or GF tamari","1 tsp sesame oil","2 green onions, sliced","2 cloves garlic, minced"],
+st:["Heat sesame oil in skillet/wok over high heat.","Scramble eggs, break into pieces, push aside.","Add garlic, peas and carrots, cook 2 minutes.","Add rice and coconut aminos. Toss 3–4 minutes until crispy.","Fold in chicken. Top with green onions."],
+tp:"Day-old rice is key—fries up crispy. Coconut aminos make this fully GF."},
+{id:17,c:"Pulled Rotisserie Chicken",n:"Chicken Enchilada Stuffed Peppers",t:"35 min",s:"2 (2 each)",cal:470,p:44,cb:32,f:18,gf:1,
+ig:["4 large bell peppers, seeded","2 cups pulled rotisserie chicken","½ cup black beans","½ cup corn","½ cup red enchilada sauce (check GF)","½ cup shredded Mexican cheese","¼ cup Greek yogurt","1 tsp cumin","1 tsp chili powder","Salt & pepper","Cilantro"],
+st:["Preheat 375°F. Place peppers upright in baking dish.","Mix chicken, beans, corn, half the sauce, half the cheese, spices.","Stuff peppers. Spoon remaining sauce on top.","Cover with foil, bake 20 min. Uncover, add cheese, bake 5–8 more min.","Top with yogurt and cilantro."],
+tp:"Bell peppers are naturally GF vessels replacing tortillas. Prep the night before."},
+{id:18,c:"Pulled Rotisserie Chicken",n:"Chicken Salad-Stuffed Avocados",t:"10 min",s:"2",cal:450,p:40,cb:16,f:26,gf:1,
+ig:["2 cups pulled rotisserie chicken","2 ripe avocados, halved","2 tbsp Greek yogurt","1 stalk celery, diced","2 tbsp red onion, diced","1 tbsp Dijon mustard","Juice of ½ lemon","Salt, pepper, garlic powder","Everything bagel seasoning (optional)"],
+st:["Mix chicken with yogurt, Dijon, celery, red onion, lemon juice, seasonings.","Scoop out a bit of each avocado half. Dice it and fold into chicken.","Mound chicken salad into avocado halves.","Sprinkle with everything bagel seasoning."],
+tp:"Zero cooking—fastest high-protein dinner in the book. Great post-run when you don't want the stove."},
+{id:19,c:"Pulled Rotisserie Chicken",n:"Chicken & White Bean Soup",t:"25 min",s:"4",cal:420,p:40,cb:36,f:12,gf:1,
+ig:["3 cups pulled rotisserie chicken","2 cans cannellini beans, drained","4 cups chicken broth (GF)","2 cups spinach or kale","1 can (14 oz) diced tomatoes","1 onion, diced","3 cloves garlic, minced","1 tbsp olive oil","1 tsp Italian seasoning","½ tsp smoked paprika","Salt & pepper","Juice of ½ lemon","Parmesan"],
+st:["Sauté onion 3–4 min. Add garlic, Italian seasoning, paprika 30 sec.","Add broth, tomatoes, beans. Boil then simmer 10 min.","Stir in chicken and spinach 3–4 min.","Add lemon juice, season.","Top with Parmesan."],
+tp:"Makes 4 big servings—batch cook and freeze up to 3 months. One rotisserie chicken covers the whole pot."},
+{id:20,c:"Turkey (Ground, 93/7)",n:"Turkey Taco Lettuce Wraps",t:"20 min",s:"2",cal:460,p:42,cb:24,f:20,gf:1,
+ig:["12 oz 93/7 ground turkey","1 head butter lettuce","½ cup corn","½ cup black beans","¼ cup diced tomato","¼ avocado, diced","2 tbsp taco seasoning (check GF)","¼ cup shredded cheese","Salsa and lime"],
+st:["Brown turkey into crumbles.","Add taco seasoning + ¼ cup water. Simmer 3–4 min.","Separate lettuce into cups.","Fill with turkey, corn, beans, tomato, cheese, avocado.","Serve with salsa and lime."],
+tp:"Lettuce wraps = zero gluten concerns and very low carb. Surprisingly satisfying crunch."},
+{id:21,c:"Pork Tenderloin",n:"Honey-Garlic Pork Tenderloin with Roasted Broccoli",t:"30 min",s:"2",cal:480,p:44,cb:34,f:16,gf:1,
+ig:["12 oz pork tenderloin","2 tbsp honey","2 tbsp coconut aminos or GF tamari","3 cloves garlic, minced","1 tsp Dijon mustard","1 head broccoli","1 tbsp olive oil","Salt & pepper"],
+st:["Preheat 400°F. Mix honey, coconut aminos, garlic, Dijon.","Season pork. Sear in oven-safe skillet, 2 min per side.","Pour glaze over pork. Roast 15–18 min to 145°F.","Toss broccoli with oil, salt, pepper. Roast alongside last 12 min.","Rest pork 5 min. Slice. Drizzle pan juices."],
+tp:"Nearly as lean as chicken breast with more flavor. Costco sells 2-packs."},
+{id:22,c:"Shrimp",n:"Garlic Shrimp with Quinoa & Sautéed Spinach",t:"20 min",s:"2",cal:460,p:42,cb:38,f:14,gf:1,
+ig:["12 oz large shrimp, peeled","1 cup quinoa, cooked","4 cloves garlic, minced","4 cups fresh spinach","1 tbsp olive oil","1 tbsp butter","Juice of 1 lemon","Red pepper flakes","Salt & pepper"],
+st:["Cook quinoa per package.","Heat oil and butter. Add garlic and pepper flakes 30 sec.","Cook shrimp 2 min per side. Squeeze lemon. Remove.","Wilt spinach in same pan 1–2 min.","Plate quinoa, spinach, shrimp. Spoon pan juices over."],
+tp:"Frozen shrimp from Costco defrosts in 10 minutes under cold water. High protein, very low fat."},
+{id:23,c:"Shrimp",n:"Shrimp Fajita Sheet Pan",t:"20 min",s:"2",cal:440,p:40,cb:36,f:14,gf:1,
+ig:["12 oz large shrimp","2 bell peppers, sliced","1 onion, sliced","1 cup rice, cooked","1 tbsp olive oil","1 tbsp fajita seasoning (check GF)","Lime wedges","Cilantro","Optional: yogurt, salsa, avocado"],
+st:["Preheat 425°F. Toss peppers and onion with half the oil and seasoning on sheet pan.","Roast vegetables 10 min.","Toss shrimp with remaining oil and seasoning. Add to pan.","Roast 6–8 min until shrimp are pink.","Serve over rice with lime and toppings."],
+tp:"Shrimp cook fast—watch closely to avoid rubbery texture. Entire meal in 20 minutes."},
+{id:24,c:"Shrimp",n:"Cilantro-Lime Shrimp & Black Bean Bowl",t:"15 min",s:"2",cal:480,p:42,cb:48,f:12,gf:1,
+ig:["12 oz large shrimp","1 can (15 oz) black beans, drained","1 cup jasmine rice, cooked","1 cup corn kernels","¼ cup cilantro, chopped","2 limes (juice)","2 cloves garlic, minced","1 tsp cumin","1 tbsp olive oil","Salt & pepper","Optional: avocado, salsa, lettuce"],
+st:["Heat oil. Season shrimp with cumin, salt, pepper. Cook 2 min per side. Add garlic last 30 sec. Remove.","Warm beans and corn in same pan 2 min.","Toss rice with half the lime juice and cilantro.","Build bowls: rice, beans/corn, shrimp, remaining lime and cilantro."],
+tp:"Hits every macro cleanly in 15 minutes. Keep frozen shrimp on hand for zero-plan nights."},
+{id:25,c:"Salmon",n:"Sheet Pan Teriyaki Salmon with Edamame & Rice",t:"25 min",s:"2",cal:550,p:46,cb:44,f:18,gf:1,
+ig:["2 salmon fillets (5 oz each)","1 cup jasmine rice, cooked","1 cup edamame (frozen)","2 tbsp GF teriyaki sauce","1 tbsp rice vinegar","1 tsp sesame oil","1 green onion, sliced","Sesame seeds","1 cup broccoli florets"],
+st:["Preheat 400°F. Line sheet pan with parchment.","Place salmon and broccoli on pan. Brush salmon with teriyaki.","Bake 12–15 min until salmon flakes (145°F).","Cook edamame per package. Cook rice if needed.","Build bowls: rice, salmon, broccoli, edamame. Drizzle rice vinegar and sesame oil."],
+tp:"Omega-3s support recovery and reduce inflammation. Check teriyaki labels for gluten."},
+{id:26,c:"Salmon",n:"Lemon-Dill Salmon with Roasted Asparagus & Potatoes",t:"30 min",s:"2",cal:520,p:44,cb:40,f:18,gf:1,
+ig:["2 salmon fillets (5 oz each)","1 lb mini red potatoes, halved","1 bunch asparagus, trimmed","1 lemon (juice + slices)","2 tbsp fresh dill","2 cloves garlic, minced","1.5 tbsp olive oil","Salt & pepper"],
+st:["Preheat 425°F. Toss potatoes with 1 tbsp oil, salt, pepper. Roast 15 min.","Add asparagus and nestle salmon among vegetables.","Drizzle salmon with remaining oil, lemon, garlic, dill, and lemon slices.","Roast 12–15 min until salmon reaches 145°F.","Serve straight from the pan."],
+tp:"One pan, one cleanup. Potatoes absorb the lemon and salmon drippings—don't skip them."},
+{id:27,c:"Salmon",n:"Blackened Salmon Bowls with Mango Salsa",t:"20 min",s:"2",cal:530,p:42,cb:46,f:16,gf:1,
+ig:["2 salmon fillets (5 oz each)","1 cup rice, cooked","1 mango, diced","¼ red onion, diced","¼ cup cilantro","1 jalapeño, minced (optional)","Juice of 1 lime","1 tbsp blackening seasoning","1 tbsp olive oil","1 cup shredded cabbage"],
+st:["Mix mango, red onion, cilantro, jalapeño, lime juice, salt.","Coat salmon with blackening seasoning.","Heat oil medium-high. Cook salmon 3–4 min per side.","Build bowls: rice, cabbage, salmon, mango salsa."],
+tp:"Frozen mango from Costco or TJ's makes this easy year-round. Sweet salsa balances the spice."},
+{id:28,c:"Meal Prep Breakfast",n:"Protein-Packed Veggie Frittata",t:"25 min",s:"2",cal:440,p:38,cb:22,f:22,gf:1,
+ig:["6 large eggs","½ cup Daisy 4% cottage cheese","1 cup spinach","½ bell pepper, diced","¼ onion, diced","¼ cup mushrooms, sliced","¼ cup shredded cheese","1 tsp olive oil","Salt, pepper, Italian seasoning"],
+st:["Preheat 375°F. Whisk eggs with cottage cheese and seasonings.","Sauté onion, pepper, mushrooms 3–4 min.","Add spinach, stir until wilted.","Pour egg mixture over. Cook 2–3 min until edges set.","Top with cheese. Bake 12–15 min until set.","Cool 5 min. Slice."],
+tp:"Cottage cheese adds creaminess and protein without heavy cream. Serve with mini red potatoes."},
+{id:29,c:"Meal Prep Breakfast",n:"Egg Muffin Cups (Batch of 12)",t:"30 min",s:"4 (3 each)",cal:320,p:28,cb:8,f:20,gf:1,
+ig:["10 large eggs","½ cup Daisy 4% cottage cheese","1 cup spinach, chopped","½ bell pepper, diced","¼ cup onion, diced","4 slices turkey bacon, crumbled","½ cup shredded cheddar","Salt, pepper, garlic powder","Cooking spray"],
+st:["Preheat 350°F. Spray 12-cup muffin tin generously.","Whisk eggs with cottage cheese and seasonings.","Divide spinach, pepper, onion, bacon among cups.","Pour egg mixture ¾ full. Top with cheese.","Bake 20–22 min until puffed and set.","Cool 5 min in tin, then remove."],
+tp:"Ultimate grab-and-go. Fridge 5 days, freeze 2 months. Reheat from frozen 60–90 seconds."},
+{id:30,c:"Meal Prep Breakfast",n:"Cottage Cheese Protein Bowls (3 Ways)",t:"5 min",s:"1 per bowl",cal:340,p:30,cb:32,f:10,gf:1,
+ig:["Base: 1 cup Daisy 4% cottage cheese","TROPICAL: ½ cup mango, ¼ cup pineapple, 1 tbsp coconut flakes, honey","BERRY CRUNCH: ½ cup berries, 2 tbsp GF granola, honey, cinnamon","PB & BANANA: ½ banana, 1 tbsp PB Fit drizzle, mini chocolate chips, cinnamon"],
+st:["Scoop 1 cup cottage cheese into a bowl.","Add your chosen toppings.","Mix gently or leave layered. Eat or refrigerate overnight."],
+tp:"PB & Banana tastes like dessert. Use PB Fit instead of peanut butter. Prep all 3 Sunday night."},
+{id:31,c:"Meal Prep Breakfast",n:"Sausage & Egg Breakfast Casserole",t:"45 min",s:"6",cal:380,p:32,cb:22,f:18,gf:1,
+ig:["10 large eggs","1 lb mini red potatoes, diced small","12 oz chicken/turkey sausage, sliced (Aidells/Applegate)","1 cup spinach, chopped","½ bell pepper, diced","½ onion, diced","1 cup shredded cheddar","¼ cup milk","1 tsp garlic powder","1 tsp smoked paprika","Salt & pepper","Cooking spray"],
+st:["Preheat 375°F. Spray 9x13 dish. Microwave potatoes 4–5 min. Spread in dish.","Cook sausage until browned. Add pepper, onion 3 min. Add spinach.","Spread over potatoes.","Whisk eggs, milk, seasonings. Pour over. Top with cheese.","Bake 25–30 min until set. Cool 10 min. Cut into 6."],
+tp:"Cut 6 squares Sunday = breakfast all week + one extra. Reheats in 90 seconds. Potato base keeps it GF."},
+{id:32,c:"Meal Prep Breakfast",n:"Southwest Egg Scramble Jars",t:"20 min",s:"4 jars",cal:360,p:30,cb:20,f:18,gf:1,
+ig:["8 large eggs","½ cup black beans","½ cup corn","½ bell pepper, diced","¼ cup diced tomato","½ cup shredded Mexican cheese","1 tbsp olive oil","1 tsp cumin","½ tsp chili powder","Salt & pepper","Salsa for topping","4 mason jars"],
+st:["Sauté pepper 2 min, add corn and beans 2 min.","Whisk eggs with cumin, chili powder, salt, pepper. Pour in and scramble until just set.","Remove from heat. Fold in tomato and cheese.","Divide among 4 jars. Cool, seal, refrigerate.","Reheat 60–90 sec. Top with salsa."],
+tp:"Slightly undercook when prepping—perfect after reheating. Keep 4–5 days. Add cottage cheese for extra 12g protein."},
+{id:33,c:"Meal Prep Breakfast",n:"Cottage Cheese Pancakes (High Protein, GF)",t:"15 min",s:"2 (4 each)",cal:380,p:32,cb:36,f:12,gf:1,
+ig:["1 cup Daisy 4% cottage cheese","4 large eggs","½ cup GF oats (blended to flour)","1 tsp vanilla","1 tsp cinnamon","1 tsp GF baking powder","Pinch salt","Cooking spray","Toppings: berries, banana, sugar-free syrup, PB Fit drizzle"],
+st:["Blend cottage cheese, eggs, oat flour, vanilla, cinnamon, baking powder, salt until smooth.","Heat nonstick skillet over medium-low. Spray.","Pour ¼ cup batter per pancake. Cook 2–3 min until bubbles form.","Flip, cook 1–2 min until golden.","Serve with toppings."],
+tp:"32g protein per stack. Double batch and freeze—reheat in toaster for 2-minute breakfast."}
+];
+
+const S=[
+{n:"Mini Red Potatoes",m:"~140 cal · 3g P · 30g C per cup",e:"🥔",
+mt:[{m:"Roasted",h:"Halve. Toss with oil, salt, pepper, garlic powder. Cut-side down at 425°F, 25–30 min.",t:"30m"},{m:"Smashed",h:"Boil whole 15 min. Smash flat. Oil, salt, rosemary. Broil 5–8 min.",t:"25m"},{m:"Microwave",h:"Halve in bowl with 2 tbsp water. Cover. 6–8 min. Season.",t:"8m"}],
+tp:"Buy the big bag at Costco. Par-cook in microwave to cut oven time in half."},
+{n:"Sweet Potatoes",m:"~110 cal · 2g P · 26g C per potato",e:"🍠",
+mt:[{m:"Baked Whole",h:"Pierce with fork. 400°F for 45–50 min.",t:"50m"},{m:"Cubed & Roasted",h:"Peel, dice ½-inch. Oil + smoked paprika. 425°F, 20–25 min, flip halfway.",t:"25m"},{m:"Microwave",h:"Pierce. 5–6 min per potato, flip halfway.",t:"8m"},{m:"Mashed",h:"Peel, cube, boil 12–15 min. Mash with milk, butter, salt, cinnamon.",t:"20m"}],
+tp:"Bake 4–6 at once on meal prep day—keeps 5 days in fridge."},
+{n:"Jasmine Rice",m:"~200 cal · 4g P · 45g C per cup",e:"🍚",
+mt:[{m:"Stovetop",h:"Rinse. 1 cup rice + 1.5 cups water + salt. Boil, reduce to low, cover 15 min. Steam 5 min. Fluff.",t:"22m"},{m:"Rice Cooker",h:"Rinse. 1 cup rice + 1.5 cups water + salt. Press cook.",t:"20m"},{m:"Cilantro-Lime",h:"Cook either way. Stir in juice of 1 lime, ¼ cup cilantro, salt.",t:"+2m"}],
+tp:"Always rinse—removes starch and prevents gummy texture. Batch cook for stir-fries."},
+{n:"Brown Rice",m:"~215 cal · 5g P · 45g C per cup",e:"🌾",
+mt:[{m:"Stovetop",h:"Rinse. 1 cup + 2 cups water + salt. Boil, low, cover 40–45 min. Steam 10 min.",t:"55m"},{m:"Boil Method",h:"Large pot salted water (like pasta). Add 1 cup rice, boil 25–30 min. Drain.",t:"30m"}],
+tp:"Boil-and-drain works like pasta when you're short on time. Batch cook and freeze in 1-cup portions."},
+{n:"Quinoa",m:"~220 cal · 8g P · 40g C per cup",e:"🫘",
+mt:[{m:"Stovetop",h:"Rinse in fine mesh strainer. 1 cup + 2 cups water + salt. Boil, low, cover 15 min. Rest 5 min. Fluff.",t:"22m"}],
+tp:"Highest-protein grain at 8g/cup. Rinsing removes the bitter coating (saponin). Naturally GF."},
+{n:"Broccoli",m:"~55 cal · 4g P · 10g C per 2 cups",e:"🥦",
+mt:[{m:"Roasted",h:"Florets + oil, salt, pepper, garlic powder. Single layer at 425°F, 18–20 min.",t:"20m"},{m:"Steamed",h:"Steamer basket over boiling water. Cover 4–5 min.",t:"5m"},{m:"Sautéed",h:"Oil, medium-high, 5–6 min. Garlic last 30 sec. Red pepper flakes.",t:"7m"}],
+tp:"Don't overcrowd the pan or it steams instead of roasts. Use the stems too—peel and slice them."},
+{n:"Asparagus",m:"~40 cal · 4g P · 7g C per bunch",e:"🌿",
+mt:[{m:"Roasted",h:"Snap woody ends. Oil, salt, pepper. Single layer 425°F, 10–12 min.",t:"12m"},{m:"Grilled",h:"Oil and salt. Medium-high 3–4 min, turn once. Lemon.",t:"4m"},{m:"Sautéed",h:"2-inch pieces. Oil, medium-high, 4–5 min. Garlic and lemon.",t:"5m"}],
+tp:"Goes from perfect to mushy fast—err on undercooking. Thick spears are more tender than thin."},
+{n:"Brussels Sprouts",m:"~56 cal · 4g P · 12g C per cup",e:"🟢",
+mt:[{m:"Roasted",h:"Trim, halve. Oil. Cut-side down at 425°F, 20–25 min. Don't flip.",t:"25m"},{m:"Air Fryer",h:"Halve, toss with oil. 400°F, 12–15 min, shake halfway.",t:"15m"}],
+tp:"High heat + don't overcrowd = charred perfection. Balsamic vinegar drizzle after roasting."},
+{n:"Zucchini",m:"~30 cal · 2g P · 6g C per medium",e:"🫛",
+mt:[{m:"Roasted",h:"Half-moons + oil, Italian seasoning. 425°F, 15–18 min.",t:"18m"},{m:"Grilled",h:"¼-inch planks. Brush with oil. 2–3 min per side.",t:"6m"},{m:"Sautéed",h:"Dice/slice. Oil, medium-high, 4–5 min. Garlic, salt, pepper.",t:"5m"}],
+tp:"Salt and let sit 10 min before cooking to draw out moisture—prevents sogginess."},
+{n:"Bell Peppers",m:"~30 cal · 1g P · 7g C per pepper",e:"🫑",
+mt:[{m:"Roasted",h:"Strips + oil. 425°F, 15–20 min until charred.",t:"20m"},{m:"Fajita-Style",h:"Strips, high heat, oil, 4–5 min until blistered.",t:"5m"},{m:"Raw Prep",h:"Strips stored in water in sealed containers. Crisp 5–7 days.",t:"5m"}],
+tp:"Red/orange are sweeter than green (same pepper, more ripe). Roast in bulk for the week."},
+{n:"Spinach",m:"~7 cal · 1g P · 1g C per cup raw",e:"🥬",
+mt:[{m:"Sautéed",h:"Oil/butter, medium heat. Garlic 30 sec. Add spinach by the handful. Salt, lemon.",t:"3m"},{m:"Steamed",h:"Microwave-safe bowl + 1 tbsp water. Cover. 1–2 min. Squeeze out water.",t:"2m"}],
+tp:"A mountain cooks to almost nothing—buy more than you think. Virtually zero calories."},
+{n:"Green Beans",m:"~35 cal · 2g P · 8g C per cup",e:"🫛",
+mt:[{m:"Roasted",h:"Trim. Oil. 425°F, 15–18 min until blistered.",t:"18m"},{m:"Sautéed",h:"Trim, halve. Oil, medium-high, 5–6 min. Garlic last 30 sec.",t:"6m"},{m:"Steamed",h:"Steamer basket, 4–5 min until crisp-tender.",t:"5m"}],
+tp:"Frozen works for steaming and sautéing. For roasting, use fresh."},
+{n:"Cauliflower",m:"~25 cal · 2g P · 5g C per cup",e:"🤍",
+mt:[{m:"Roasted",h:"Florets + oil, salt, garlic powder. 425°F, 25–30 min until golden.",t:"30m"},{m:"Cauliflower Rice",h:"Pulse in food processor (or buy pre-riced). Oil, medium-high, 5–6 min.",t:"8m"},{m:"Mashed",h:"Steam 10 min until soft. Mash with butter, salt, milk.",t:"15m"}],
+tp:"Cauli rice saves ~170 cal and 40g carbs vs white rice. Pre-riced bags from Costco are a time saver."}
+];
+
+const CC={"Chicken Breast":{bg:"#FFF3E0",a:"#E65100",i:"🍗"},"Ground Beef (93/7)":{bg:"#FFEBEE",a:"#B71C1C",i:"🥩"},"Sirloin Steak":{bg:"#FCE4EC",a:"#880E4F",i:"🥩"},"Pulled Rotisserie Chicken":{bg:"#FFF8E1",a:"#F57F17",i:"🍗"},"Turkey (Ground, 93/7)":{bg:"#E8F5E9",a:"#2E7D32",i:"🦃"},"Pork Tenderloin":{bg:"#FBE9E7",a:"#BF360C",i:"🥓"},Shrimp:{bg:"#E0F7FA",a:"#00695C",i:"🦐"},Salmon:{bg:"#E3F2FD",a:"#1565C0",i:"🐟"},"Meal Prep Breakfast":{bg:"#FFFDE7",a:"#F9A825",i:"🍳"}};
+const CATS=[...new Set(R.map(r=>r.c))];
+
+// ═══ STATE ═══
+let view='home', selRecipe=null, search='', activeCat='All', showFavs=false, openSides={};
+let favs=[];
+try{favs=JSON.parse(localStorage.getItem('hp-favs'))||[];}catch(e){favs=[];}
+function saveFavs(){try{localStorage.setItem('hp-favs',JSON.stringify(favs));}catch(e){}}
+function toggleFav(id){const i=favs.indexOf(id);if(i>-1)favs.splice(i,1);else favs.push(id);saveFavs();render();}
+
+// ═══ RENDER ═══
+function h(tag,attrs,...ch){
+  const el=document.createElement(tag);
+  if(attrs)Object.entries(attrs).forEach(([k,v])=>{
+    if(k==='style'&&typeof v==='object')Object.assign(el.style,v);
+    else if(k.startsWith('on'))el.addEventListener(k.slice(2).toLowerCase(),v);
+    else if(k==='className')el.className=v;
+    else if(k==='innerHTML')el.innerHTML=v;
+    else el.setAttribute(k,v);
+  });
+  ch.flat(9).forEach(c=>{if(c!=null)el.append(typeof c==='string'?document.createTextNode(c):c)});
+  return el;
+}
+
+function macro(label,value,color){
+  return h('div',{className:'macro'},
+    h('div',{className:'val',style:{color}},value),
+    h('div',{className:'lbl'},label)
+  );
+}
+
+function renderCard(r){
+  const cc=CC[r.c]||{bg:'#f5f5f5',a:'#555',i:'🍽️'};
+  const card=h('div',{className:'card fade-in',onClick:()=>{selRecipe=r;view='detail';render();document.querySelector('.main').scrollTop=0;}},
+    h('div',{className:'card-head',style:{background:cc.bg}},
+      h('div',{className:'card-cat'},
+        h('span',{className:'icon'},cc.i),
+        h('span',{className:'label',style:{color:cc.a}},r.c),
+        r.gf?h('span',{className:'gf-badge'},'GF'):null
+      ),
+      h('button',{className:'fav-btn',onClick:e=>{e.stopPropagation();toggleFav(r.id);}},favs.includes(r.id)?'❤️':'🤍')
+    ),
+    h('div',{className:'card-body'},
+      h('h3',{},r.n),
+      h('div',{className:'card-meta'},h('span',{},'⏱ '+r.t),h('span',{className:'sep'},'|'),h('span',{},'👤 '+r.s)),
+      h('div',{className:'macros'},macro('Cal',r.cal,cc.a),macro('Protein',r.p+'g','#2E7D32'),macro('Carbs',r.cb+'g','#E65100'),macro('Fat',r.f+'g','#1565C0'))
+    )
+  );
+  return card;
+}
+
+function renderDetail(r){
+  const cc=CC[r.c]||{bg:'#f5f5f5',a:'#555',i:'🍽️'};
+  const el=h('div',{className:'detail fade-in'},
+    h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'8px'}},
+      h('button',{className:'back-btn',onClick:()=>{view='home';render();}},'← Back'),
+      h('button',{className:'fav-btn',style:{fontSize:'22px'},onClick:()=>toggleFav(r.id)},favs.includes(r.id)?'❤️':'🤍')
+    ),
+    h('div',{className:'detail-header',style:{background:cc.bg}},
+      h('div',{className:'cat-row'},h('span',{style:{fontSize:'20px'}},cc.i),h('span',{style:{fontSize:'11px',fontWeight:700,textTransform:'uppercase',letterSpacing:'1.2px',color:cc.a}},r.c),r.gf?h('span',{className:'gf-badge',style:{fontSize:'10px',padding:'2px 7px'}},'GF'):null),
+      h('h1',{},r.n),
+      h('div',{className:'meta'},'⏱ '+r.t+' | 👤 '+r.s)
+    ),
+    h('div',{className:'macros',style:{marginBottom:'22px'}},macro('Calories',r.cal,cc.a),macro('Protein',r.p+'g','#2E7D32'),macro('Carbs',r.cb+'g','#E65100'),macro('Fat',r.f+'g','#1565C0')),
+    h('h2',{},'Ingredients'),
+    h('ul',{},...r.ig.map(i=>h('li',{},i))),
+    h('h2',{},'Instructions'),
+    h('ol',{},...r.st.map(s=>h('li',{},s))),
+    r.tp?h('div',{className:'tip-box',style:{background:`linear-gradient(135deg,#FFF8E1,#FFF3E0)`,borderLeft:`4px solid ${cc.a}`}},h('span',{style:{fontWeight:700,color:cc.a,fontSize:'13px'}},'💡 Pro Tip: '),h('span',{style:{fontSize:'13px',color:'#555',lineHeight:'1.6'}},r.tp)):null
+  );
+  return el;
+}
+
+function renderSides(){
+  const el=h('div',{className:'sides-page fade-in'},
+    h('button',{className:'back-btn',onClick:()=>{view='home';render();}},'← Back to Recipes'),
+    h('h2',{},'Sides Guide'),
+    h('p',{className:'intro'},'How to cook the basics — multiple methods, macros, and tips for each.'),
+    ...S.map((s,i)=>{
+      const isOpen=!!openSides[i];
+      const card=h('div',{className:'side-card'},
+        h('div',{className:'side-toggle',onClick:()=>{openSides[i]=!openSides[i];render();}},
+          h('div',{className:'left'},h('span',{style:{fontSize:'20px'}},s.e),h('div',{},h('div',{className:'name'},s.n),h('div',{className:'smacros'},s.m))),
+          h('span',{className:'arrow'+(isOpen?' open':'')},'\u25BE')
+        )
+      );
+      if(isOpen){
+        const body=h('div',{className:'side-body'},
+          ...s.mt.map(mt=>h('div',{className:'method-card'},h('div',{className:'method-top'},h('span',{className:'mname'},mt.m),h('span',{className:'mtime'},mt.t)),h('p',{},mt.h))),
+          s.tp?h('div',{style:{background:'linear-gradient(135deg,#FFF8E1,#FFF3E0)',borderLeft:'4px solid #E65100',borderRadius:'0 10px 10px 0',padding:'10px 12px',marginTop:'6px'}},h('span',{style:{fontWeight:700,color:'#E65100',fontSize:'12px'}},'💡 '),h('span',{style:{fontSize:'12px',color:'#555'}},s.tp)):null
+        );
+        card.append(body);
+      }
+      return card;
+    })
+  );
+  return el;
+}
+
+function render(){
+  const app=document.getElementById('app');
+  app.innerHTML='';
+
+  // Header
+  const hdr=h('div',{className:'hdr'});
+  const top=h('div',{className:'hdr-top'},
+    h('div',{onClick:()=>{view='home';selRecipe=null;render();},style:{cursor:'pointer'}},
+      h('h1',{},'High Protein Cookbook'),
+      h('div',{className:'sub'},R.length+' RECIPES · MOSTLY GF · MEAL PREP READY')
+    )
+  );
+  if(view==='home'){
+    const btns=h('div',{className:'hdr-btns'},
+      h('button',{className:'hdr-btn',onClick:()=>{view='sides';render();}},'🥗 Sides'),
+      h('button',{className:'hdr-btn'+(showFavs?' active':''),onClick:()=>{showFavs=!showFavs;render();}},showFavs?'❤️ Favs':'🤍 Favs')
+    );
+    top.append(btns);
+  }
+  hdr.append(top);
+
+  if(view==='home'){
+    const sw=h('div',{className:'search-wrap'},
+      h('span',{className:'search-icon'},'🔍')
+    );
+    const inp=h('input',{type:'text',placeholder:'Search recipes or ingredients…',value:search,onInput:e=>{search=e.target.value;render();}});
+    sw.append(inp);
+    if(search)sw.append(h('button',{className:'search-clear',onClick:()=>{search='';render();}},'✕'));
+    hdr.append(sw);
+
+    const pills=h('div',{className:'pills'});
+    ['All',...CATS].forEach(cat=>{
+      const ci=CC[cat];
+      pills.append(h('button',{className:'pill'+(activeCat===cat?' on':''),onClick:()=>{activeCat=cat;render();}},cat==='All'?'All':(ci?ci.i+' ':'')+cat));
+    });
+    hdr.append(pills);
+  }
+  app.append(hdr);
+
+  // Main
+  const main=h('div',{className:'main'});
+
+  if(view==='home'){
+    let list=R;
+    if(showFavs)list=list.filter(r=>favs.includes(r.id));
+    if(activeCat!=='All')list=list.filter(r=>r.c===activeCat);
+    if(search.trim()){const q=search.toLowerCase();list=list.filter(r=>r.n.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)||r.ig.some(i=>i.toLowerCase().includes(q)));}
+    if(list.length===0){
+      main.append(h('div',{className:'empty'},h('div',{className:'big'},'🍽️'),h('p',{style:{fontSize:'15px',fontWeight:600}},'No recipes found'),h('p',{style:{fontSize:'13px'}},'Try a different search or category')));
+    }else{
+      const cards=h('div',{className:'cards'});
+      list.forEach(r=>cards.append(renderCard(r)));
+      main.append(cards);
+    }
+  }else if(view==='detail'&&selRecipe){
+    main.append(renderDetail(selRecipe));
+  }else if(view==='sides'){
+    main.append(renderSides());
+  }
+
+  app.append(main);
+}
+
+render();
+
+// Register service worker
+if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+</script>
+</body>
+</html>
