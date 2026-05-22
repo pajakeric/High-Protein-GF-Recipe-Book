@@ -1,0 +1,15 @@
+{
+  "name": "High Protein Cookbook",
+  "short_name": "HP Cookbook",
+  "description": "33 high-protein recipes with macros, sides guide, and meal prep breakfasts.",
+  "start_url": "/High-Protein-GF-Recipe-Book/",
+  "scope": "/High-Protein-GF-Recipe-Book/",
+  "display": "standalone",
+  "background_color": "#1B3A4B",
+  "theme_color": "#1B3A4B",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
